@@ -44,5 +44,5 @@
 //! }
 //! ```
 
-pub use tag_derive::Tags;
-pub use tag_value::Value;
+pub use acts_tag_derive::Tags;
+pub use acts_tag_value::Value;

@@ -1,13 +1,13 @@
 [package]
 edition = "2021"
-name = "tag-derive"
+name = "acts-tag-derive"
 version = "0.1.0"
 
 [lib]
 proc-macro = true
 
 [dependencies]
+acts-tag-value = {path = "../acts-tag-value"}
 proc-macro2 = "1.0.56"
 quote = "1.0.26"
 syn = "2.0.13"
-tag-value = {path = "../tag-value"}

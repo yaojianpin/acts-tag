@@ -1,6 +1,6 @@
 [package]
 edition = "2021"
-name = "tag-value"
+name = "acts-tag-value"
 version = "0.1.0"
 
 [dependencies]
