@@ -1,0 +1,18 @@
+[package]
+authors = ["Yao <yaojianpin@sohu.com>"]
+edition = "2021"
+keywords = ["tags"]
+license = "MIT"
+name = "acts-tag"
+repository = "https://github.com/yaojianpin/acts.git"
+version = "0.1.0"
+
+[dependencies]
+tag-derive = {path = "./tag-derive"}
+tag-value = {path = "./tag-value"}
+
+[dev-dependencies]
+serde = "1.0.160"
+
+[workspace]
+members = ["tag-derive", "tag-value"]
