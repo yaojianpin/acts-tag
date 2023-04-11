@@ -8,8 +8,8 @@ repository = "https://github.com/yaojianpin/acts.git"
 version = "0.1.0"
 
 [dependencies]
-tag-derive = {path = "./tag-derive"}
-tag-value = {path = "./tag-value"}
+tag-derive = {path = "./tag-derive", version = "0.1.0"}
+tag-value = {path = "./tag-value", version = "0.1.0"}
 
 [dev-dependencies]
 serde = "1.0.160"
