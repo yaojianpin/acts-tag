@@ -1,6 +1,10 @@
 [package]
+authors = ["Yao <yaojianpin@sohu.com>"]
+description = "provide proc-macro Tags derive for acts-tag"
 edition = "2021"
+license = "MIT"
 name = "acts-tag-derive"
+repository = "https://github.com/yaojianpin/acts-tag.git"
 version = "0.1.0"
 
 [lib]
