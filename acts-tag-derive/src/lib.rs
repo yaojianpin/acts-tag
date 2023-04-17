@@ -1,6 +1,5 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use std::stringify;
 use syn::{self, parse_macro_input, DeriveInput, Fields};
 
 const TAG_ATTR_NAME: &str = "tag";
@@ -18,17 +17,21 @@ pub fn derive_tag(input: TokenStream) -> TokenStream {
     if let syn::Data::Struct(data_struct) = data {
         if let Fields::Named(fields) = data_struct.fields {
             fields.named.iter().for_each(|f| {
-                let tag = &f.ident;
-                for attr in &f.attrs {
-                    if let Some(ident) = attr.path().get_ident() {
-                        if ident == TAG_ATTR_NAME {
-                            let name = format!("{}", tag.clone().unwrap());
-                            tags.push(Tag {
-                                name,
-                                ident: tag.clone(),
-                            });
-                        }
+                let field_name = &f.ident;
+                let tag_attrs: Vec<&syn::Attribute> = f
+                    .attrs
+                    .iter()
+                    .filter(|at| at.path().is_ident(TAG_ATTR_NAME))
+                    .collect();
+                for attr in tag_attrs {
+                    let mut name = format!("{}", field_name.clone().unwrap());
+                    if let Some(tag_name) = parse_tag_name(attr).unwrap() {
+                        name = format!("{}", tag_name)
                     }
+                    tags.push(Tag {
+                        name,
+                        ident: field_name.clone(),
+                    });
                 }
             });
         }
@@ -39,28 +42,36 @@ pub fn derive_tag(input: TokenStream) -> TokenStream {
     for tag in tags {
         let name = tag.name;
         let ident = tag.ident;
-        tag_names.push(quote! { #name });
-        tag_value_matches.push(quote! { #name => Some( Value::from(&self.#ident)) });
+        tag_names.push(quote! { #name.to_string() });
+        tag_value_matches.push(quote! { #name => Some( Value::from(&self.#ident).unwrap() ) });
     }
 
     let output = quote! {
-        impl #ident {
 
-            pub fn is_tag(&self, name: &str) -> bool {
-                self.tag_value(name).is_some()
-            }
-
-            pub fn tag_value(&self, name: &str) -> Option<Value> {
+        impl Tags for #ident {
+            fn value(&self, name: &str) -> Option<Value> {
                 match name {
                     #(#tag_value_matches),*,
                     _ => None
                 }
             }
 
-            pub fn tag_keys(&self) -> Vec<&str> {
+            fn keys() -> Vec<String> {
                 vec![#(#tag_names),*]
             }
         }
     };
     output.into()
+}
+
+fn parse_tag_name(attr: &syn::Attribute) -> Result<Option<syn::Ident>, syn::Error> {
+    let mut key = None;
+    let _ = attr.parse_nested_meta(|meta| {
+        if let Some(name) = meta.path.get_ident() {
+            key = Some(name.clone());
+        }
+        Ok(())
+    });
+
+    Ok(key)
 }

@@ -9,6 +9,9 @@ pub struct TestStruct {
 
 #[derive(Tags)]
 pub struct MyTags {
+    #[tag(id)]
+    pub tag_id: String,
+
     #[tag]
     pub tag1: String,
 
@@ -30,18 +33,19 @@ pub struct MyTags2 {
 #[test]
 fn test_tag_attr_simple_value() {
     let t = MyTags {
+        tag_id: "tag_id".to_string(),
         tag1: "a".to_string(),
         tag2: 5,
         others: "others".to_string(),
     };
 
-    let tag1 = t.tag_value("tag1");
-    assert_eq!(tag1.unwrap().to::<String>().unwrap(), t.tag1);
+    let tag1 = t.value("tag1");
+    assert_eq!(tag1.unwrap().real::<String>().unwrap(), t.tag1);
 
-    let tag2 = t.tag_value("tag2");
-    assert_eq!(tag2.unwrap().to::<i32>().unwrap(), t.tag2);
+    let tag2 = t.value("tag2");
+    assert_eq!(tag2.unwrap().real::<i32>().unwrap(), t.tag2);
 
-    let others = t.tag_value("others");
+    let others = t.value("others");
     assert_eq!(others, None);
 }
 
@@ -56,13 +60,13 @@ fn test_tag_attr_complex_value() {
         tag4: map.clone(),
     };
 
-    let tag3 = t.tag_value("tag3");
-    assert_eq!(tag3.unwrap().to::<Vec<i32>>().unwrap(), t.tag3);
+    let tag3 = t.value("tag3");
+    assert_eq!(tag3.unwrap().real::<Vec<i32>>().unwrap(), t.tag3);
 
     let tag4 = t
-        .tag_value("tag4")
+        .value("tag4")
         .unwrap()
-        .to::<HashMap<String, TestStruct>>()
+        .real::<HashMap<String, TestStruct>>()
         .unwrap();
 
     for (k, v) in &tag4 {
@@ -73,12 +77,35 @@ fn test_tag_attr_complex_value() {
 
 #[test]
 fn test_tag_tags() {
+    let tags = MyTags::keys();
+    assert_eq!(tags, vec!["id", "tag1", "tag2"]);
+}
+
+#[test]
+fn test_is_tag() {
     let t = MyTags {
+        tag_id: "tag_id".to_string(),
         tag1: "a".to_string(),
         tag2: 5,
         others: "others".to_string(),
     };
 
-    let tags = t.tag_keys();
-    assert_eq!(tags, vec!["tag1", "tag2"]);
+    let is_tag1 = t.is_tag("tag1");
+    assert_eq!(is_tag1, true);
+
+    let is_others = t.is_tag("others");
+    assert_eq!(is_others, false);
+}
+
+#[test]
+fn test_tag_id() {
+    let t = MyTags {
+        tag_id: "tag_id".to_string(),
+        tag1: "a".to_string(),
+        tag2: 5,
+        others: "others".to_string(),
+    };
+
+    let tag_id = t.value("id");
+    assert_eq!(tag_id.unwrap().real::<String>().unwrap(), t.tag_id);
 }

@@ -6,11 +6,11 @@ keywords = ["tags"]
 license = "MIT"
 name = "acts-tag"
 repository = "https://github.com/yaojianpin/acts-tag.git"
-version = "0.1.0"
+version = "0.2.0"
 
 [dependencies]
-acts-tag-derive = {path = "./acts-tag-derive", version = "0.1.0"}
-acts-tag-value = {path = "./acts-tag-value", version = "0.1.0"}
+acts-tag-derive = {path = "./acts-tag-derive", version = "0.2.0"}
+acts-tag-value = {path = "./acts-tag-value", version = "0.2.0"}
 
 [dev-dependencies]
 serde = "1.0.160"
